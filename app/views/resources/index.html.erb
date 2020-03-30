@@ -1,0 +1,20 @@
+<div class="<%= rapid_resources_container_class @page %>">
+  <% if (page_title = @page.t('index.title')) && !page_title.blank? %><h1 class="main-title"><%= page_title %></h1><% end %>
+
+  <% if @page.index_html %>
+    <% if false %>
+      <% if (actions = resource_index_actions(page)) && !actions.blank? %>
+      <div class="toolbar mb-2">
+        <% actions.each do |action_html| %>
+          <%= action_html %>
+        <% end %>
+      </div>
+      <% end %>
+      <%= render partial: 'item_list_before', locals: { page: page, items: items } %>
+      <%= render partial: 'item_list', locals: {page: page, items: items} %>
+      <%= render partial: 'item_list_after', locals: { page: page, items: items } %>
+    <% end %>
+  <% else %>
+    <%= rapid_resources_index_component @page %>
+  <% end %>
+</div>

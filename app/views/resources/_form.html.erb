@@ -1,0 +1,58 @@
+<%- jsonapi_form ||= 0 -%>
+<% content_for :head_tags do %>
+  <%#= javascript_include_tag '/js/tinymce/tinymce.min.js' %>
+  <%#= javascript_include_tag '/js/tinymce/jquery.tinymce.min.js' %>
+  <%#= javascript_pack_tag 'wysiwyg.js' %>
+  <%#= stylesheet_pack_tag 'wysiwyg.css' %>
+  <%= rapid_resources_form_editor_asset_tags %>
+<% end if page.form_with_editor? && !@modal %>
+
+<% if page.display_form_errors && errors = page.resource_errors(item, exclude_form_fields: true) and errors.any? %>
+  <div class="card card-validation-errors mb-3">
+    <div class="card-body text-danger">
+      <h4 class="card-title text-center"><%= page.t(:'form_errors.title') %></h4>
+      <ul>
+        <% errors.each do |msg| %>
+          <li class="card-text"><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+<% end %>
+
+<% if (resource_form = page.form(item)) %>
+  <% if resource_form.has_form_fields? %>
+    <div class="rapid-form">
+      <%= form_with rapid_resources_form_options(item, page, remote: @modal || false, local: !@modal, small: @modal, html: {ref: 'inputForm', 'data-type' => jsonapi_form ? 'json' : nil}) do |f| %>
+        <%= hidden_field_tag :jsonapi_form, jsonapi_form %>
+        <%= render partial: 'form_fields', locals: { f: f, page: page, item: item, tabs: resource_form.tabs } %>
+        <% unless @modal || page.form_hide_buttons %>
+          <% if (button_partial_name = page.form_buttons_partial(item)) %>
+            <%= render partial: button_partial_name, locals: { f: f, page: page, item: item } %>
+          <% else %>
+            <div class="row form-buttons">
+              <div class="col<%= " #{resource_form.btn_wrap_col}" if resource_form.btn_wrap_col.present? %>">
+                <button type="submit" class="btn btn-primary btn-sm"><%= page.t(item.persisted? ? :'form.action.update' : :'form.action.create') %></button>
+                <%= rapid_resources_form_cancel_tag(page, item) %>
+                <%#= resource_additional_form_buttons page.additional_form_buttons, item %>
+                <% if resource_form.show_destroy_btn && item.persisted? %>
+                  <%= link_to page.t('form.action.delete'), url_for(action: :destroy, return_to: params[:return_to]), class: 'btn btn-sm btn-danger float-right',
+                    'data-method' => 'DELETE',
+                    'data-confirm' => resource_form.destroy_confirmation_message,
+                    'data-confirm-title' => resource_form.destroy_confirmation_title,
+                    'data-confirm-code' => resource_form.destroy_confirmation_code,
+                    'data-confirm-action-title' => resource_form.destroy_confirmation_action_title,
+                    'data-confirm-cancel-title' => resource_form.destroy_confirmation_cancel_title,
+                    'data-confirm-type' => 'destroy'
+                    %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="m-alert"><%= resource_form.message_title %></div>
+  <% end %>
+<% end %>

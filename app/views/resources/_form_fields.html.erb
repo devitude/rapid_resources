@@ -1,0 +1,22 @@
+<% if tabs.count > 1 %>
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <% tabs.each_with_index do |tab, tab_idx| %>
+    <li class="nav-item">
+      <a class="nav-link<%= ' active' if tab_idx == 0 %>" id="form-tab-<%= tab_idx %>" data-toggle="tab" href="#form-tab-pane-<%= tab_idx %>" role="tab" aria-controls="form-tab-pane-<%= tab_idx %>" aria-selected="<%= tab_idx == 0 ? 'true' : 'false' %>"><%= tab[:title] %></a>
+    </li>
+    <% end %>
+  </ul>
+  <div class="tab-content" id="myTabContent">
+    <% tabs.each_with_index do |tab, tab_idx| %>
+      <div class="tab-pane fade<%= ' show active' if tab_idx == 0 %>" id="form-tab-pane-<%= tab_idx %>" role="tabpanel" aria-labelledby="form-tab-pane-<%= tab_idx %>">
+        <% tab[:fields].each do |field| %>
+          <%= f.field field %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <% tabs.first[:fields].each do |field| %>
+    <%= f.field field %>
+  <% end %>
+<% end %>
