@@ -112,6 +112,48 @@ module RapidResources
       }
     end
 
+    def update
+      authorize_resource :update?
+
+      result = save_resource(@resource, resource_params)
+      if result.ok?
+        save_response(:update)
+        return
+      end
+
+      save_response(:update, false)
+
+      return if response_rendered?
+
+      r_params = {
+        locals: {
+          item: @resource,
+          page: page
+        }
+      }
+
+      respond_to do |format|
+        format.html { render :edit, r_params}
+        # format.json do
+        #   if jsonapi_form?
+        #     render_jsonapi_form(error: result)
+        #   else
+        #     @modal = true
+        #     # @html = render_to_string(:new, r_params.merge(layout: false, formats: [:html]))
+        #     # render :new, formats: [:json]
+        #     json_data = {
+        #       'html' => render_to_string(:edit, r_params.merge(layout: false, formats: [:html]))
+        #     }
+        #     json_data.merge! get_additional_json_data
+        #     render json: json_data #, formats: [:json]
+        #   end
+        # end
+        # format.jsonapi do
+        #   render_jsonapi_form(error: result)
+        # end
+      end
+    end
+
     protected
 
     def _prefixes
