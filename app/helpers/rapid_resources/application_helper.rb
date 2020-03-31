@@ -42,5 +42,11 @@ module RapidResources
         cp
       end
     end
+
+    def rapid_resources_form_before(page)
+    end
+
+    def rapid_resources_form_after(page)
+    end
   end
 end

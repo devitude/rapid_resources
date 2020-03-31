@@ -262,10 +262,6 @@ module RapidResources
       fields
     end
 
-    def form_with_editor?
-      false
-    end
-
     def display_form_errors
       @display_form_errors = true if @display_form_errors.nil?
       @display_form_errors

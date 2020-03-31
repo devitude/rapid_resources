@@ -1,11 +1,5 @@
 <%- jsonapi_form ||= 0 -%>
-<% content_for :head_tags do %>
-  <%#= javascript_include_tag '/js/tinymce/tinymce.min.js' %>
-  <%#= javascript_include_tag '/js/tinymce/jquery.tinymce.min.js' %>
-  <%#= javascript_pack_tag 'wysiwyg.js' %>
-  <%#= stylesheet_pack_tag 'wysiwyg.css' %>
-  <%= rapid_resources_form_editor_asset_tags %>
-<% end if page.form_with_editor? && !@modal %>
+<%= rapid_resources_form_before page %>
 
 <% if page.display_form_errors && errors = page.resource_errors(item, exclude_form_fields: true) and errors.any? %>
   <div class="card card-validation-errors mb-3">
@@ -56,3 +50,5 @@
     <div class="m-alert"><%= resource_form.message_title %></div>
   <% end %>
 <% end %>
+
+<%= rapid_resources_form_after page %>
