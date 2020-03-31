@@ -1,4 +1,2 @@
-<div class="<%= rapid_resources_container_class @page %>">
-  <% unless @modal %><h1 class="main-title"><%= page.t('new.title') %></h1><% end %>
-  <%= render partial: 'form', locals: { item: item, page: page } %>
-</div>
+<% unless @modal %><h1 class="main-title"><%= page.t('new.title') %></h1><% end %>
+<%= render partial: 'form', locals: { item: item, page: page } %>

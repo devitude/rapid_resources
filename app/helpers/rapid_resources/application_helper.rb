@@ -4,10 +4,6 @@ module RapidResources
       content_tag(:div, "Create helper method `rapid_resources_index_component(page)`")
     end
 
-    def rapid_resources_container_class(page)
-      'container-fluid'
-    end
-
     def rapid_resources_form_class(item, additional_classes = nil)
       controller_class = controller_path.gsub('_', '-').split('/').join(' ') + '-form'
       [additional_classes, controller_class].compact.join(' ')
