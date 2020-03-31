@@ -306,6 +306,14 @@ module RapidResources
       end
     end
 
+    def index_route_url
+      { action: :index }
+    end
+
+    def redirect_route(action = nil)
+      index_route_url
+    end
+
     def resource_params
       params_name = page.model_class.to_s.underscore.gsub('/', '_')
 
