@@ -275,11 +275,15 @@ module RapidResources
 
     # load a single resource or build a resource
     def load_res
-      @resource ||= begin
-        if load_item_actions.include?(action_name)
-          load_resource
-        elsif build_item_actions.include?(action_name)
-          build_resource
+      if @resource.nil?
+        run_callbacks :load_res do
+          @resource ||= begin
+            if load_item_actions.include?(action_name)
+              load_resource
+            elsif build_item_actions.include?(action_name)
+              build_resource
+            end
+          end
         end
       end
     end
