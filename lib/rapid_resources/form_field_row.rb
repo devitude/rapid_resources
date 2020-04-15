@@ -17,6 +17,10 @@ module RapidResources
       @empty_col_class = "col-md-#{12 / empty_cols}" if empty_cols == @fields.count && empty_cols > 0
     end
 
+    def section?
+      title.present?
+    end
+
     def check_box_list?
       options[:check_box_list]
     end
@@ -44,7 +48,7 @@ module RapidResources
           nil
         end
 
-        col_class = col ? col : check_box_list? ? nil : @empty_col_class
+        col_class = col ? col : (check_box_list? || section? ? nil : @empty_col_class)
         yield field, col_class
       end
     end

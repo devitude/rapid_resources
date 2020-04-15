@@ -48,24 +48,30 @@ module RapidResources
 
     def field(field_or_name, *params, &block)
       if field_or_name.is_a?(RapidResources::FormFieldRow)
+
+        wrapper_content_tag = :div
         html_options = { class: 'form-row' }.merge(field_or_name.html_options || {})
         html_options[:class] << ' check-box-list' if field_or_name.check_box_list?
+        if field_or_name.section?
+          wrapper_content_tag = :fieldset
+          html_options = field_or_name.html_options&.dup || {}
+          html_options[:class] = (['form-fields-group'] + [*html_options[:class]]).select { |c| c.present? }.join(' ')
+        end
+
         @context_stack << field_or_name.options
-        row_html = content_tag :div, html_options do
+        row_html = content_tag wrapper_content_tag, html_options do
+          if field_or_name.section?
+            section_title = content_tag(:div, class: 'section-title') do
+              content_tag(:h4, field_or_name.title)
+            end
+            concat section_title
+          end
           field_or_name.each_col do |fld, col_class|
             concat field(fld, wrap_col: col_class, skip_form_row: true)
           end
         end
         @context_stack.pop
-        return row_html if field_or_name.title.blank?
-
-        html_options = field_or_name.html_options&.dup || {}
-        html_options[:class] ||= 'form-fields-group'
-        return content_tag :fieldset, html_options do
-          concat content_tag(:h4, field_or_name.title)
-          concat row_html
-          # concat content_tag(:div, row_html, class: 'card card-body')
-        end
+        return row_html
       end
 
       html_block = nil
