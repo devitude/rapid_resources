@@ -35,8 +35,8 @@ module RapidResources
         {}
       end
 
-      def ordered_items(column, direction)
-        order("#{column} #{direction != :desc ? 'ASC' : 'DESC'}")
+      def ordered(column: nil, direction: nil)
+        all
       end
 
       def required_fields_attributes(context = nil)
