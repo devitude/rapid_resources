@@ -275,10 +275,15 @@ module RapidResources
       errors = []
       error_messages = resource.error_messages
       error_messages.concat resource.additional_error_messages if resource.respond_to?(:additional_error_messages)
-      if error_messages.count > 0
+      if error_messages.count.positive?
         f_fields = []
         form_fields(resource).each {|f| f_fields.concat(f.validation_keys) } if exclude_form_fields
+        wildcard_f_fields = f_fields.map { |f| f.to_s }.select { |f| f.ends_with?('.') }
         error_messages.each do |attribute, message|
+          if wildcard_f_fields.count.positive?
+            attribute_s = attribute.to_s
+            next if wildcard_f_fields.detect { |f| attribute_s.starts_with?(f) }
+          end
           errors << message unless f_fields.include?(attribute)
         end
       end
