@@ -12,8 +12,9 @@ module RapidResources
     attr_reader :destroy_confirmation_action_title
     attr_reader :destroy_confirmation_cancel_title
     attr_reader :message
+    attr_reader :css_class, :wrapper_css_class
 
-    def initialize(show_destroy_btn: false, btn_wrap_col: nil, destroy_confirmation: nil, message: nil, &block)
+    def initialize(show_destroy_btn: false, btn_wrap_col: nil, destroy_confirmation: nil, message: nil, css_class: nil, wrapper_css_class: nil, &block)
       @__cur_fields = nil
       @__cur_tab = nil
       @tabs = []
@@ -40,6 +41,8 @@ module RapidResources
       @destroy_confirmation_cancel_title = 'Cancel' if destroy_confirmation_cancel_title.blank?
 
       @message = message
+      @css_class = css_class
+      @wrapper_css_class = wrapper_css_class
     end
 
     def has_form_fields?

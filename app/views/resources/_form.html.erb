@@ -16,8 +16,8 @@
 
 <% if (resource_form = page.form(item)) %>
   <% if resource_form.has_form_fields? %>
-    <div class="rapid-form">
-      <%= form_with rapid_resources_form_options(item, page, remote: @modal || false, local: !@modal, small: @modal, html: {ref: 'inputForm', 'data-type' => jsonapi_form ? 'json' : nil}) do |f| %>
+    <div class="<%= rapid_resources_form_wrapper_css_class(resource_form) %>">
+      <%= form_with rapid_resources_form_options(resource_form, item, page, remote: @modal || false, local: !@modal, small: @modal, html: {ref: 'inputForm', 'data-type' => jsonapi_form ? 'json' : nil}) do |f| %>
         <%= hidden_field_tag :jsonapi_form, jsonapi_form %>
         <%= render partial: 'form_fields', locals: { f: f, page: page, item: item, tabs: resource_form.tabs } %>
         <% unless @modal || page.form_hide_buttons %>

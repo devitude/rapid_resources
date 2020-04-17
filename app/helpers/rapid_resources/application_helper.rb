@@ -4,18 +4,22 @@ module RapidResources
       content_tag(:div, "Create helper method `rapid_resources_index_component(page)`")
     end
 
-    def rapid_resources_form_class(item, additional_classes = nil)
+    def rapid_resources_form_wrapper_css_class(form)
+      (['rapid-form'] + [*form.wrapper_css_class]).select { |v| v.present? }.join(' ')
+    end
+
+    def rapid_resources_form_class(item, form_css_class, additional_classes = nil)
       controller_class = controller_path.gsub('_', '-').split('/').join(' ') + '-form'
-      [additional_classes, controller_class].compact.join(' ')
+      [form_css_class, additional_classes, controller_class].compact.join(' ')
     end
 
 
-    def rapid_resources_form_options(item, page = nil, options = {})
+    def rapid_resources_form_options(form, item, page = nil, options = {})
       html_options = options.delete(:html) || {}
       f_options = {
         model: item,
         url: page.form_url(item),
-        html: { class: rapid_resources_form_class(item, page.try(:form_css_class)) }.merge!(html_options),
+        html: { class: rapid_resources_form_class(item, form.css_class, page.try(:form_css_class)) }.merge!(html_options),
         builder: ::RapidResources::FormBuilder,
         remote: false,
         page: page,
