@@ -8,9 +8,8 @@ module RapidResources
       (['rapid-form'] + [*form.wrapper_css_class]).select { |v| v.present? }.join(' ')
     end
 
-    def rapid_resources_form_class(item, form_css_class, additional_classes = nil)
-      controller_class = controller_path.gsub('_', '-').split('/').join(' ') + '-form'
-      [form_css_class, additional_classes, controller_class].compact.join(' ')
+    def rapid_resources_form_class(item, page_form_css_class, form_css_class)
+      [page_form_css_class, form_css_class].compact.uniq.join(' ')
     end
 
 
@@ -19,7 +18,7 @@ module RapidResources
       f_options = {
         model: item,
         url: page.form_url(item),
-        html: { class: rapid_resources_form_class(item, form.css_class, page.try(:form_css_class)) }.merge!(html_options),
+        html: { class: rapid_resources_form_class(item, page.form_css_class, form.css_class) }.merge!(html_options),
         builder: ::RapidResources::FormBuilder,
         remote: false,
         page: page,

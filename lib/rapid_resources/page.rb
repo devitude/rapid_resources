@@ -295,6 +295,10 @@ module RapidResources
       { action: item.persisted? ? :update : :create }
     end
 
+    def form_css_class
+      "#{model_class.model_name.plural}-form"
+    end
+
     def form_options(options)
       options
     end
