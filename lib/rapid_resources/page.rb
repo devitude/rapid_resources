@@ -296,7 +296,7 @@ module RapidResources
     end
 
     def form_css_class
-      "#{model_class.model_name.plural}-form"
+      "#{model_class.model_name.plural.gsub('_', '-')}-form"
     end
 
     def form_options(options)
