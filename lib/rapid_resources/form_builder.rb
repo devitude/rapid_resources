@@ -254,10 +254,11 @@ module RapidResources
               options[:label]
             else
               # object.class.human_attribute_name(name)
-              name
+              # name
+              object.class.human_attribute_name(name, form: true)
             end
             opts[:class] = 'required' if @required_fields.include?(name)
-            concat label(label_text, opts)
+            concat label(name, label_text, opts)
           else
             control_class = "#{control_class}"
           end
