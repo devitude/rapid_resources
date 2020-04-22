@@ -144,7 +144,7 @@ module RapidResources
         f_date = options.delete(:value) || @object.send(name)
 
         if f_date.is_a?(String)
-          dv = Date.strptime(f_date, '%d/%m/%Y') rescue nil
+          dv = Date.strptime(f_date, '%d.%m.%Y') rescue nil
           f_date = dv if dv
         end
 
@@ -495,7 +495,7 @@ module RapidResources
       content_tag :div, html_options do
         input_options = { class: 'date', 'ref' => 'date' }
         input_options[:readonly] = true if readonly
-        input_options[:value] = value.respond_to?(:strftime) ? value.strftime('%d/%m/%Y') : value.to_s
+        input_options[:value] = value.respond_to?(:strftime) ? value.strftime('%d.%m.%Y') : value.to_s
         concat text_field(name, input_options)
         toggler = content_tag(:div, class: 'input-group-append') do
           content_tag(:button, '', type: 'button', class: 'btn btn-date', 'ref' => 'date-toggler', disabled: readonly)
@@ -515,7 +515,7 @@ module RapidResources
       end
 
       date_str = if value.respond_to?(:strftime)
-        value.strftime('%d/%m/%Y')
+        value.strftime('%d.%m.%Y')
       else
         value.to_s
       end
@@ -533,13 +533,23 @@ module RapidResources
       content_tag :div, html_options do
         date_input_options = { class: 'date', 'ref' => 'date', name: field_html_name(name, :date), id: field_html_id(name, :date) }
         date_input_options[:readonly] = true if readonly
-        concat text_field(name, date_str, date_input_options)
-        concat content_tag(:div, content_tag(:button, content_tag(:span, '', class: 'glyphicons calendar'), type: 'button', class: 'btn btn-picker btn-outline-secondary', 'ref' => 'date-toggler', disabled: readonly), class: 'input-group-append')
+        date_input_options[:value] = date_str
+        concat text_field(name, date_input_options)
+        # concat content_tag(:div, content_tag(:button, content_tag(:span, '', class: 'glyphicons calendar'), type: 'button', class: 'btn btn-picker btn-outline-secondary', 'ref' => 'date-toggler', disabled: readonly), class: 'input-group-append')
+        toggler = content_tag(:div, class: 'input-group-append') do
+          content_tag(:button, '', type: 'button', class: 'btn btn-date', 'ref' => 'date-toggler', disabled: readonly)
+        end
+        concat toggler
 
         time_input_options = { class: 'time', 'ref' => 'time', name: field_html_name(name, :time), id: field_html_id(name, :time) }
         time_input_options[:readonly] = true if readonly
-        concat text_field(name, time_str, time_input_options)
-        concat content_tag(:div, content_tag(:button, content_tag(:span, '', class: 'glyphicons time'), type: 'button', class: 'btn btn-picker btn-outline-secondary', 'ref' => 'time-toggler', disabled: readonly), class: 'input-group-append ui-timepicker-trigger')
+        time_input_options[:value] = time_str
+        time_input_options[:placeholder] = 'HH:MM'
+        concat text_field(name, time_input_options)
+        toggler = content_tag(:div, class: 'input-group-append') do
+          content_tag(:button, '', type: 'button', class: 'btn btn-time', 'ref' => 'time-toggler', disabled: readonly)
+        end
+        concat toggler
       end
     end
 
