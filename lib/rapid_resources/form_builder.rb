@@ -392,7 +392,7 @@ module RapidResources
         label_text = if label.is_a?(String)
           label
         elsif label != false
-          obj.class.human_attribute_name(name)
+          obj.class.human_attribute_name(name, form: true)
         end
         # concat label(name, label_text, class: 'custom-control-label')
         concat @template.label(obj_name, name, label_text, options.merge(class: 'custom-control-label'))
@@ -458,7 +458,7 @@ module RapidResources
         elsif radio_label.is_a?(String)
           radio_label
         elsif radio_label != false
-          obj.class.human_attribute_name(name)
+          obj.class.human_attribute_name(name, form: true)
         end
         concat @template.label(obj_name, name, label_html, options.merge(class: 'custom-control-label', value: tag_value))
       end
