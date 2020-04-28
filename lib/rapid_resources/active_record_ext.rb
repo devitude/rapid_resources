@@ -14,9 +14,19 @@ module RapidResources
     end
 
     class_methods do
-      def on_save(*cb_methods, &block)
-        set_callback :on_save, &block if block_given?
-        set_callback :on_save, *cb_methods if cb_methods.any?
+      def before_on_save(*cb_methods, &block)
+        set_callback :on_save, :before, &block if block_given?
+        set_callback :on_save, :before, *cb_methods if cb_methods.any?
+      end
+
+      def after_on_save(*cb_methods, &block)
+        set_callback :on_save, :after, &block if block_given?
+        set_callback :on_save, :after, *cb_methods if cb_methods.any?
+      end
+
+      def around_on_save(*cb_methods, &block)
+        set_callback :on_save, :around, &block if block_given?
+        set_callback :on_save, :around, *cb_methods if cb_methods.any?
       end
 
       def alive
@@ -94,15 +104,14 @@ module RapidResources
     end
 
     def save(*args, &block)
-      on_save
-      run_callbacks :on_save
+      call_on_save
       with_swallow_save_excetions { super }
     end
 
     def save!(*args, &block)
       current_swallow, Thread.current[:swallow_save_exceptions] = Thread.current[:swallow_save_exceptions], false
 
-      on_save
+      call_on_save
       super
     ensure
       Thread.current[:swallow_save_exceptions] = current_swallow
@@ -220,6 +229,12 @@ module RapidResources
     def add_save_error(key, error)
       errors.add(key, error)
       @the_save_errors << [key, error]
+    end
+
+    def call_on_save
+      run_callbacks :on_save do
+        on_save
+      end
     end
   end
 end
