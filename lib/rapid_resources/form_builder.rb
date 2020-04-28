@@ -242,10 +242,16 @@ module RapidResources
       end
 
       additional_group_class = options.delete(:form_group_css_class)
+      wrap_ref = options.delete(:wrap_ref)
+
       if wrap_controls
         help_text = options.delete(:help_text)
+
         wrap_col = " #{wrap_col.is_a?(Numeric) ? "col-md-#{wrap_col}" : wrap_col}" unless wrap_col.blank?
-        wrap_html = content_tag :div, class: "form-group#{wrap_col} #{additional_group_class}" do
+        wrap_options = { class: "form-group#{wrap_col} #{additional_group_class}" }
+        wrap_options[:ref] = wrap_ref if skip_form_row && wrap_ref.present?
+
+        wrap_html = content_tag :div, wrap_options do
           control_class = form_control_class + ' input-sm'
           if type != :hidden && options[:label] != false && (name || options[:label])
             opts = {}
@@ -267,7 +273,12 @@ module RapidResources
           concat content_tag(:small, help_text, class: 'form-text text-muted') if help_text.present?
           concat content_tag(:div, errors.join('; '), class: 'invalid-feedback') if errors.any?
         end
-        wrap_html = content_tag(:div, wrap_html, class: 'form-row') unless skip_form_row
+
+        unless skip_form_row
+          row_options = { class: 'form-row' }
+          row_options[:ref] = wrap_ref if wrap_ref.present?
+          wrap_html = content_tag(:div, wrap_html, row_options)
+        end
 
         wrap_html
       else
