@@ -439,7 +439,7 @@ module RapidResources
           options, obj_name, obj = extract_scope(options)
           concat @template.radio_button(obj_name, name, tag_value, options.merge(class: 'custom-control-input'))
         else
-          concat super(name, html_options.merge(class: 'custom-control-input'))
+          concat super(name, tag_value, html_options.merge(class: 'custom-control-input'))
         end
 
         label_html = if block_given?
