@@ -320,7 +320,20 @@ module RapidResources
       if options[:scope]
         scoped_field(:text_field, name, options)
       else
-        super(name, options)
+        postfix = options.delete(:postfix)
+        if postfix.present?
+          css_class = ['input-group']
+          css_class << 'input-group-sm' if @small
+          content_tag(:div, class: css_class.join(' ')) do
+            concat super(name, options)
+            input_group_append = content_tag(:div, class: 'input-group-append') do
+              content_tag(:span, postfix, class: 'input-group-text')
+            end
+            concat input_group_append
+          end
+        else
+          super(name, options)
+        end
       end
     end
 
