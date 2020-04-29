@@ -263,7 +263,7 @@ module RapidResources
               # name
               object.class.human_attribute_name(name, form: true)
             end
-            opts[:class] = 'required' if @required_fields.include?(name)
+            opts[:class] = 'required' if (@required_fields & validation_keys).count.positive?
             concat label(name, label_text, opts)
           else
             control_class = "#{control_class}"

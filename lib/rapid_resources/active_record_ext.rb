@@ -53,6 +53,10 @@ module RapidResources
         {}
       end
 
+      def additional_required_fields(context = nil)
+        []
+      end
+
       def required_fields(context = nil)
         @required_fields ||= {}
         fields_tag = context || :base
@@ -63,6 +67,7 @@ module RapidResources
           obj.errors.keys.each do |e_attribute|
             fields << e_attribute if obj.errors.added?(e_attribute, :blank)
           end
+          fields.concat additional_required_fields(context)
           fields
         end
       end
