@@ -2,8 +2,8 @@ module RapidResources::Ext::HumanAttributeName
   extend ActiveSupport::Concern
 
   class_methods do
-    if Rails.version != '6.0.2.2'
-      railse RuntimeError, 'RapidResources::Ext::HumanAttributeName supports only raisl 6.0.2.2'
+    if Rails.version != '6.0.3.rc1'
+      raise RuntimeError, 'RapidResources::Ext::HumanAttributeName supports only raisl 6.0.3.rc1'
     end
 
     # customize default human_attribute_name
@@ -37,7 +37,7 @@ module RapidResources::Ext::HumanAttributeName
       ### end customisation ###
 
       options[:default] = defaults
-      I18n.translate(defaults.shift, options)
+      I18n.translate(defaults.shift, **options)
     end
   end
 end
