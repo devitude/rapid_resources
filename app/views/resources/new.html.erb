@@ -1,2 +1,2 @@
-<% unless @modal %><h1 class="main-title"><%= page.t('new.title') %></h1><% end %>
+<% unless @modal %><h1 class="main-title"><%= page.t('new.title', item) %></h1><% end %>
 <%= render partial: 'form', locals: { item: item, page: page } %>

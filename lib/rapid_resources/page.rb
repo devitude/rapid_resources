@@ -227,7 +227,7 @@ module RapidResources
       title
     end
 
-    def t(key)
+    def t(key, item = nil)
       defaults = [
         :"page.base.#{key}",
         # key.to_s

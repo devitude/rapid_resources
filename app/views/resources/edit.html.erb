@@ -1,6 +1,6 @@
 <% if (title_helper = page&.title_helper) %>
   <%= send(title_helper, item, page) %>
 <% else %>
-  <% unless @modal %><h1 class="main-title"><%= page.t('edit.title') %></h1><% end %>
+  <% unless @modal %><h1 class="main-title"><%= page.t('edit.title', item) %></h1><% end %>
 <% end %>
 <%= render partial: 'form', locals: { item: item, page: page } %>
