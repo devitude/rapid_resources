@@ -57,6 +57,11 @@ module RapidResources
       if @options.key?(:field_names) && @options[:field_names]
         prms.concat @options[:field_names]
       end
+
+      if @options[:manual_value_flag].present?
+        prms << @options[:manual_value_flag]
+      end
+
       prms
     end
 

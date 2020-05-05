@@ -121,7 +121,9 @@ module RapidResources
         errors.concat @object.errors.full_messages_for(k)
       end
 
+      field_is_invalid = false
       if errors.any?
+        field_is_invalid = true
         css_class = [*options[:class]]
         css_class << 'is-invalid'
         options[:class] = css_class.join(' ')
@@ -130,6 +132,7 @@ module RapidResources
       control_html = case type
       when :text
         options[:value] = @object.send(name) unless options.key?(:value) #f_value = options.delete(:value) || @object.send(name)
+        options[:is_invalid] = field_is_invalid
         text_field name, options
       when :hidden
         hidden_field name, options
@@ -317,12 +320,19 @@ module RapidResources
     def text_field(name, options = {})
       options[:class] = [form_control_class, options[:class]].compact.join(' ')
 
+      is_invalid = options.delete(:is_invalid)
+
+      auto_value = options.delete(:auto_value)
+      manual_value_flag = options.delete(:manual_value_flag)
+      auto_edit_field = auto_value.present? && manual_value_flag.present?
+
       if options[:scope]
         scoped_field(:text_field, name, options)
       else
         postfix = options.delete(:postfix)
         if postfix.present?
           css_class = ['input-group']
+          css_class << 'is-invalid' if is_invalid
           css_class << 'input-group-sm' if @small
           content_tag(:div, class: css_class.join(' ')) do
             concat super(name, options)
@@ -332,7 +342,22 @@ module RapidResources
             concat input_group_append
           end
         else
-          super(name, options)
+          if auto_edit_field
+            css_class = ['input-group input-group-auto-field']
+            css_class << 'is-invalid' if is_invalid
+            css_class << 'input-group-sm' if @small
+            content_tag(:div, class: css_class.join(' ')) do
+              concat super(name, options.merge('auto-field-ref' => 'manual-value'))
+              concat @template.text_field_tag(nil, auto_value, readonly: true, class: 'form-control d-none', 'auto-field-ref': 'auto-value')
+              concat hidden_field(manual_value_flag, 'auto-field-ref': 'manual-value-flag')
+              input_group_append = content_tag(:div, class: 'input-group-append') do
+                content_tag(:span, postfix, class: 'input-group-text input-group-icon-edit', 'auto-field-ref': 'toggle-manual-value')
+              end
+              concat input_group_append
+            end
+          else
+            super(name, options)
+          end
         end
       end
     end
