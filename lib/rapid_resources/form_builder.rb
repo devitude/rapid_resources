@@ -348,10 +348,10 @@ module RapidResources
             css_class << 'input-group-sm' if @small
             content_tag(:div, class: css_class.join(' ')) do
               concat super(name, options.merge('auto-field-ref' => 'manual-value'))
-              concat @template.text_field_tag(nil, auto_value, readonly: true, class: 'form-control d-none', 'auto-field-ref': 'auto-value')
+              concat @template.text_field_tag('_auto_value', auto_value, id: nil, readonly: true, class: 'form-control d-none', 'auto-field-ref': 'auto-value')
               concat hidden_field(manual_value_flag, 'auto-field-ref': 'manual-value-flag')
               input_group_append = content_tag(:div, class: 'input-group-append') do
-                content_tag(:span, postfix, class: 'input-group-text input-group-icon-edit', 'auto-field-ref': 'toggle-manual-value')
+                content_tag(:span, '', class: 'input-group-text input-group-icon-edit', 'auto-field-ref': 'toggle-manual-value')
               end
               concat input_group_append
             end
@@ -537,17 +537,35 @@ module RapidResources
     end
 
     def date_field(name, value, html_options = {})
+      auto_value = html_options.delete(:auto_value)
+      manual_value_flag = html_options.delete(:manual_value_flag)
+      auto_edit_field = auto_value.present? && manual_value_flag.present?
+
+      auto_value = '' if auto_value == true
+
       readonly = html_options.delete(:readonly)
       css_class = [*html_options[:class]]
       css_class << 'input-group date'
+      css_class << 'input-group-sm' if @small
+      css_class << 'input-group-auto-field' if auto_edit_field
       html_options[:class] = css_class.compact.join(' ')
+
       content_tag :div, html_options do
         input_options = { class: 'date', 'ref' => 'date' }
         input_options[:readonly] = true if readonly
         input_options[:value] = value.respond_to?(:strftime) ? value.strftime('%d.%m.%Y') : value.to_s
+        input_options['auto-field-ref'] = 'manual-value' if auto_edit_field
         concat text_field(name, input_options)
+
+        if auto_edit_field
+          concat @template.text_field_tag('_auto_value', auto_value, id: nil, readonly: true, class: 'form-control d-none', 'auto-field-ref': 'auto-value')
+          concat hidden_field(manual_value_flag, 'auto-field-ref': 'manual-value-flag')
+        end
         toggler = content_tag(:div, class: 'input-group-append') do
-          content_tag(:button, '', type: 'button', class: 'btn btn-date', 'ref' => 'date-toggler', disabled: readonly)
+          concat content_tag(:button, '', type: 'button', class: 'btn btn-date', 'ref' => 'date-toggler', disabled: readonly, 'auto-field-ref': 'manual-value')
+          if auto_edit_field
+            concat content_tag(:span, '', class: 'input-group-text input-group-icon-edit', 'auto-field-ref': 'toggle-manual-value')
+          end
         end
         concat toggler
       end
