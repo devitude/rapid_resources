@@ -195,7 +195,7 @@ module RapidResources
           add_save_error(md[1], :blank)
         else
           # failed to extract column, report exception
-          Utils.report_exception(ex)
+          RapidResources::Base.report_exception_proc.call(ex)
           add_save_error(:base, :error)
         end
         @save_failed = true
@@ -205,7 +205,7 @@ module RapidResources
         raise unless @__swallow_save_exceptions
 
         # other exception
-        Utils.report_exception(ex)
+        RapidResources::Base.report_exception_proc.call(ex)
 
         add_save_error(:base, :error)
         @save_failed = true
