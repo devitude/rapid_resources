@@ -51,10 +51,17 @@ module RapidResources
       authorize_resource :new?
       return if response_rendered?
 
-      render locals: {
-        page: page,
-        item: @resource,
-      }
+      respond_to do |format|
+        format.jsonapi do
+          render_jsonapi_form
+        end
+        format.any do
+          render locals: {
+            page: page,
+            item: @resource,
+          }
+        end
+      end
     end
 
     def create
@@ -77,7 +84,13 @@ module RapidResources
       }
 
       respond_to do |format|
-        format.html { render :new, r_params}
+        # format.jsonapi do
+        #   render_jsonapi_form(error: result)
+        # end
+        format.any { render :new, r_params}
+        format.jsonapi do
+          render_jsonapi_form(error: result)
+        end
         # format.json do
         #   if jsonapi_form?
         #     render_jsonapi_form(error: result)
@@ -106,10 +119,17 @@ module RapidResources
       authorize_resource :edit?
       return if response_rendered?
 
-      render locals: {
-        page: page,
-        item: @resource,
-      }
+      respond_to do |format|
+        format.jsonapi do
+          render_jsonapi_form
+        end
+        format.any do
+          render locals: {
+            page: page,
+            item: @resource,
+          }
+        end
+      end
     end
 
     def update
@@ -159,6 +179,10 @@ module RapidResources
     def _prefixes
       # add resources
       super << 'resources'
+    end
+
+    def jsonapi_form?
+      params[:jsonapi_form] == '1'
     end
 
     def page
@@ -273,6 +297,45 @@ module RapidResources
       render jsonapi: items, **jsonapi_options
     end
 
+    def render_jsonapi_form_error(error, status: 422)
+      frm_id = controller_path.split('/').last.singularize.camelize.freeze
+      form_data = ResourceFormData.new(id: "frm-#{frm_id}") #(id: 'new-project')
+      form_data.html = ''
+      form_data.meta = { error: { message: error } }
+      render jsonapi: form_data, status: status
+    end
+
+    def render_jsonapi_form(error: nil, form_id: nil, form_page: nil)
+      form_page ||= page
+
+      old_display_errors = form_page.display_form_errors
+      @modal = true
+      form_page.display_form_errors = false
+      frm_id = controller_path.split('/').last.singularize.camelize.freeze
+      form_data = ResourceFormData.new(id: "frm-#{frm_id}") #(id: 'new-project')
+      # form_data.submit_title = @resource.new_record? ? 'Create new project' : 'Save project' # page.t(@resource.persisted? ? :'form_action.update' : :'form_action.create')
+      form_data.submit_title = form_page.t(@resource.persisted? ? :'form.action.update' : :'form.action.create')
+      form_data.html = render_to_string(partial: 'form',
+        formats: [:html],
+        locals: {
+          page: form_page,
+          item: @resource,
+          jsonapi_form: 1,
+        })
+      form_page.display_form_errors = old_display_errors
+
+      if error.present?
+        if error.is_a?(Result) && error.error.present?
+          form_data.meta = { error: { message: "Notikusi kļūda: #{error.error}"} }
+        else
+          form_data.meta = { error: { message: 'Notikusi kļūda', details: @resource.error_messages.map(&:second) } }
+        end
+        render jsonapi: form_data, status: 422
+      else
+        render jsonapi: form_data, class: { :'RapidResources::ResourceFormData' => SerializableResourceFormData }, expose: { url_helpers: self, current_user: current_user }
+      end
+    end
+
     # load a single resource or build a resource
     def load_res
       if @resource.nil?
@@ -339,7 +402,8 @@ module RapidResources
         format.html { redirect_to redirect_route(action) }
         format.json do
           if jsonapi_form?
-            render jsonapi: @resource, expose: { url_helpers: self, current_user: current_user }, status: 201
+            headers['JsonapiForm-Status'] = 'success'
+            render jsonapi: @resource, expose: { url_helpers: self, current_user: current_user }
           else
             json_data = {'status' => 'success'}
             json_data.merge! get_additional_json_data

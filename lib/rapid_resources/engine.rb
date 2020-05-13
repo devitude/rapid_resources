@@ -19,6 +19,7 @@ module RapidResources
       require_dependency 'rapid_resources/form_field'
       require_dependency 'rapid_resources/active_record_ext'
       require_dependency 'rapid_resources/form_builder'
+      require_dependency 'rapid_resources/resource_form_data'
     end
   end
 end
