@@ -306,7 +306,7 @@ module RapidResources
     def required_fields_context(resource)
     end
 
-    def form_hide_buttons
+    def hide_form_buttons(resource)
       false
     end
 

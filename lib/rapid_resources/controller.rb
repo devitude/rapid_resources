@@ -68,6 +68,8 @@ module RapidResources
       authorize_resource :create?
 
       result = save_resource(@resource, resource_params)
+      return if response_rendered?
+
       if result.ok?
         save_response(:create)
         return
@@ -136,6 +138,8 @@ module RapidResources
       authorize_resource :update?
 
       result = save_resource(@resource, resource_params)
+      return if response_rendered?
+
       if result.ok?
         save_response(:update)
         return
