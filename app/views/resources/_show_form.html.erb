@@ -1,0 +1,7 @@
+<% if resource_form.has_form_fields? %>
+  <div class="<%= rapid_resources_form_wrapper_css_class(resource_form) %>">
+    <%= fields_for :view, item, page: page, builder: ::RapidResources::FormBuilder do |f| %>
+      <%= render partial: 'form_fields', locals: { f: f, page: page, item: item, tabs: resource_form.tabs } %>
+    <% end %>
+  </div>
+<% end %>

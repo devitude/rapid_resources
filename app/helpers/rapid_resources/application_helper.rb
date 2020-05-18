@@ -51,5 +51,9 @@ module RapidResources
 
     def rapid_resources_form_after(page)
     end
+
+    def render_rapid_resources_view_form(page, resource, resource_form)
+      render partial: 'show_form', locals: { page: page, item: resource, resource_form: resource_form }
+    end
   end
 end
