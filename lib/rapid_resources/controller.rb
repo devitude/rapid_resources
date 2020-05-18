@@ -38,6 +38,13 @@ module RapidResources
         format.jsonapi do
           grid_list
         end
+        format.xlsx do
+          items = load_items
+          columns = page.collection_fields
+
+          xlsx_path = generate_xlsx_file(items, columns)
+          send_file xlsx_path, filename: xlsx_filename, type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        end
         format.any do
           items = load_items
 
@@ -440,6 +447,34 @@ module RapidResources
           .require(params_name)
           .permit(page.permitted_attributes(@resource))
       # end
+    end
+
+    def xlsx_filename
+      'items.xlsx'
+    end
+
+    def generate_xlsx_file(items, columns, sheet_name: 'Items')
+      xlsx = Axlsx::Package.new do |package|
+        package.workbook.use_shared_strings = true # otherwise file can not be read back by rubyXL
+        package.workbook.add_worksheet(name: sheet_name) do |sheet|
+          headers = columns.map { |c| c.title }
+          sheet.add_row headers
+
+          items.each do |item|
+            row_data = []
+            columns.each do |c|
+              val = item.send(c.name) rescue nil
+              row_data << (val || '')
+            end
+            sheet.add_row row_data
+          end
+        end
+      end
+
+      uid = current_user ? "-#{current_user.id}" : nil
+      temp_path = Rails.root.join('tmp', "items-#{Time.now.to_f}#{uid}.xlsx")
+      xlsx.serialize temp_path
+      temp_path
     end
 
   end
