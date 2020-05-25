@@ -414,7 +414,7 @@ module RapidResources
         format.json do
           if jsonapi_form?
             headers['JsonapiForm-Status'] = 'success'
-            render jsonapi: @resource, expose: { url_helpers: self, current_user: current_user }
+            render jsonapi: @resource, expose: { page: page, url_helpers: self, current_user: current_user }
           else
             json_data = {'status' => 'success'}
             json_data.merge! get_additional_json_data
