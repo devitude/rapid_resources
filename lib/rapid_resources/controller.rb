@@ -5,6 +5,7 @@ module RapidResources
     included do
       before_action :load_res
       define_callbacks :load_res
+      define_callbacks :authorize_action
     end
 
     class_methods do
@@ -27,6 +28,24 @@ module RapidResources
       def after_load_res(*names, &blk)
         _insert_callbacks(names, blk) do |name, options|
           set_callback(:load_res, :after, name, options)
+        end
+      end
+
+      def around_authorize_action(*names, &blk)
+        _insert_callbacks(names, blk) do |name, options|
+          set_callback(:authorize_action, :around, name, options)
+        end
+      end
+
+      def before_authorize_action(*names, &blk)
+        _insert_callbacks(names, blk) do |name, options|
+          set_callback(:authorize_action, :before, name, options)
+        end
+      end
+
+      def after_authorize_action(*names, &blk)
+        _insert_callbacks(names, blk) do |name, options|
+          set_callback(:authorize_action, :after, name, options)
         end
       end
     end
@@ -222,11 +241,21 @@ module RapidResources
     end
 
     def authorize_action(query)
-      case query
-      when :index?
-        authorize page.model_class, query
-      else
-        authorize @resource, query
+      run_callbacks :authorize_action do
+        # if authorization has been performed or response rendered, do nothing
+        if response_rendered? || pundit_policy_authorized?
+          # set action as authorized, otherwise an exception is thrown if `verify_authorized` after_callback is set
+          skip_authorization
+          next
+        end
+
+        # TODO: use load_item_actions to determine if need to call authorize? with @resource or check if @resource.nil?
+        case query
+        when :index?
+          authorize page.model_class, query
+        else
+          authorize @resource, query
+        end
       end
     end
 
