@@ -204,6 +204,34 @@ module RapidResources
       end
     end
 
+    def destroy
+      authorize_action :destroy?
+      result = destroy_resource(@resource)
+      if result.ok?
+        respond_to do |format|
+          format.html {
+            redirect_to redirect_route(:destroy), notice: result[:message] || 'Ieraksts izdzēsts'
+          }
+          format.any {
+            head :no_content
+          }
+        end
+      else
+        error_message = result.error || 'Kļūda dzēšot ierakstu'
+        respond_to do |format|
+          format.jsonapi {
+            render jsonapi_errors: {title: error_message }, status: 500
+          }
+          format.json {
+            render json: { error: error_message }
+          }
+          format.any {
+            redirect_to url_for({ action: :edit }), alert: error_message
+          }
+        end
+      end
+    end
+
     protected
 
     def _prefixes
@@ -504,6 +532,10 @@ module RapidResources
       temp_path = Rails.root.join('tmp', "items-#{Time.now.to_f}#{uid}.xlsx")
       xlsx.serialize temp_path
       temp_path
+    end
+
+    def destroy_resource(resource)
+      Result.err('Dzēšana nav implementēta!')
     end
 
   end

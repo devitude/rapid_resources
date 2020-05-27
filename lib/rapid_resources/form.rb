@@ -29,16 +29,16 @@ module RapidResources
       destroy_confirmation = {} unless destroy_confirmation.is_a?(Hash)
       @destroy_confirmation_code = destroy_confirmation[:code]
       @destroy_confirmation_message = destroy_confirmation[:message]
-      @destroy_confirmation_message = 'Are you sure?' if @destroy_confirmation_message.blank?
+      @destroy_confirmation_message = 'Vai dzēst ierakstu?' if @destroy_confirmation_message.blank?
 
       @destroy_confirmation_title = destroy_confirmation[:title]
-      @destroy_confirmation_title = 'Delete confirmation' if @destroy_confirmation_title.blank?
+      @destroy_confirmation_title = 'Dzēšanas apstiprinājums' if @destroy_confirmation_title.blank?
 
       @destroy_confirmation_action_title = destroy_confirmation[:action_title]
-      @destroy_confirmation_action_title = 'Delete' if destroy_confirmation_action_title.blank?
+      @destroy_confirmation_action_title = 'Dzēst' if destroy_confirmation_action_title.blank?
 
       @destroy_confirmation_cancel_title = destroy_confirmation[:cancel_title]
-      @destroy_confirmation_cancel_title = 'Cancel' if destroy_confirmation_cancel_title.blank?
+      @destroy_confirmation_cancel_title = 'Atcelt' if destroy_confirmation_cancel_title.blank?
 
       @message = message
       @css_class = css_class
