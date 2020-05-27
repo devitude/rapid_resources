@@ -24,13 +24,13 @@
           <% if (button_partial_name = page.form_buttons_partial(item)) %>
             <%= render partial: button_partial_name, locals: { f: f, page: page, item: item } %>
           <% else %>
-            <div class="row form-buttons">
-              <div class="col<%= " #{resource_form.btn_wrap_col}" if resource_form.btn_wrap_col.present? %>">
+            <div class="form-row form-buttons">
+              <div class="col<%= " #{resource_form.btn_wrap_col}" if resource_form.btn_wrap_col.present? %> d-flex">
                 <button type="submit" class="btn btn-primary btn-sm"><%= page.t(item.persisted? ? :'form.action.update' : :'form.action.create') %></button>
                 <%= rapid_resources_form_cancel_tag(page, item) %>
                 <%#= resource_additional_form_buttons page.additional_form_buttons, item %>
                 <% if resource_form.show_destroy_btn && item.persisted? %>
-                  <%= link_to page.t('form.action.delete'), url_for(action: :destroy, return_to: params[:return_to]), class: 'btn btn-sm btn-danger float-right',
+                  <%= link_to page.t('form.action.delete'), url_for(action: :destroy, return_to: params[:return_to]), class: 'btn btn-sm btn-danger ml-auto',
                     'data-method' => 'DELETE',
                     'data-confirm' => resource_form.destroy_confirmation_message,
                     'data-confirm-title' => resource_form.destroy_confirmation_title,
