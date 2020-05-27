@@ -108,12 +108,12 @@ module RapidResources
       error_messages
     end
 
-    def save(*args, &block)
+    def save(*args, **options, &block)
       call_on_save
       with_swallow_save_excetions { super }
     end
 
-    def save!(*args, &block)
+    def save!(*args, **options, &block)
       current_swallow, Thread.current[:swallow_save_exceptions] = Thread.current[:swallow_save_exceptions], false
 
       call_on_save
