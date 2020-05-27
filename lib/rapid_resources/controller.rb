@@ -32,7 +32,7 @@ module RapidResources
     end
 
     def index
-      authorize_resource :index?
+      authorize_action :index?
 
       respond_to do |format|
         format.jsonapi do
@@ -55,7 +55,7 @@ module RapidResources
     end
 
     def new
-      authorize_resource :new?
+      authorize_action :new?
       return if response_rendered?
 
       respond_to do |format|
@@ -72,7 +72,7 @@ module RapidResources
     end
 
     def create
-      authorize_resource :create?
+      authorize_action :create?
 
       result = save_resource(@resource, resource_params)
       return if response_rendered?
@@ -125,7 +125,7 @@ module RapidResources
     end
 
     def edit
-      authorize_resource :edit?
+      authorize_action :edit?
       return if response_rendered?
 
       respond_to do |format|
@@ -142,7 +142,7 @@ module RapidResources
     end
 
     def update
-      authorize_resource :update?
+      authorize_action :update?
 
       result = save_resource(@resource, resource_params)
       return if response_rendered?
@@ -221,7 +221,7 @@ module RapidResources
       nil
     end
 
-    def authorize_resource(query)
+    def authorize_action(query)
       case query
       when :index?
         authorize page.model_class, query
