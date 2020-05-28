@@ -33,6 +33,19 @@ module RapidResources
       link_to page.t(:'form.action.cancel'), cancel_path, class: 'btn btn-default btn-sm'
     end
 
+    def rapid_resources_form_delete_tag(page, item, resource_form)
+      if resource_form.show_destroy_btn && item.persisted?
+        link_to page.t('form.action.delete'), url_for(action: :destroy, return_to: params[:return_to]), class: 'btn btn-sm btn-danger ml-auto',
+          'data-method' => 'DELETE',
+          'data-confirm' => resource_form.destroy_confirmation_message,
+          'data-confirm-title' => resource_form.destroy_confirmation_title,
+          'data-confirm-code' => resource_form.destroy_confirmation_code,
+          'data-confirm-action-title' => resource_form.destroy_confirmation_action_title,
+          'data-confirm-cancel-title' => resource_form.destroy_confirmation_cancel_title,
+          'data-confirm-type' => 'destroy'
+      end
+    end
+
     def rapid_resources_form_cancel_path(page, item)
       cp = page.form_cancel_path(item)
       if !params[:return_to].blank? && params[:return_to].starts_with?('/')
